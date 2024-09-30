@@ -17,6 +17,9 @@ class Tweet(Common):
     def __str__(self):
         return self.payload
 
+    def likes_count(self):
+        return self.likes.count()
+
 
 class Like(Common):
     """Like Model Definition"""
@@ -28,6 +31,7 @@ class Like(Common):
     tweet = models.ForeignKey(
         "tweets.Tweet",
         on_delete=models.CASCADE,
+        related_name="likes",
     )
 
     def __str__(self):
