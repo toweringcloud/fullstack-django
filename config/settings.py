@@ -35,6 +35,10 @@ CUSTOM_APPS = [
     "users.apps.UsersConfig",
 ]
 
+THIRD_PARTY_APPS = [
+    "rest_framework",
+]
+
 SYSTEM_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -44,7 +48,7 @@ SYSTEM_APPS = [
     "django.contrib.staticfiles",
 ]
 
-INSTALLED_APPS = SYSTEM_APPS + CUSTOM_APPS
+INSTALLED_APPS = SYSTEM_APPS + THIRD_PARTY_APPS + CUSTOM_APPS
 
 # Auth
 AUTH_USER_MODEL = "users.User"
