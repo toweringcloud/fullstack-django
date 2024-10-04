@@ -1,37 +1,40 @@
-from rest_framework.decorators import api_view
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from .models import User
-from .serializers import UserSerializer
 from tweets.serializers import TweetSerializer
+from .models import User
+from .serializers import PrivateUserSerializer, TinyUserSerializer
 
 
-@api_view(["GET"])
-def users(request):
-    if request.method == "GET":
+class Users(APIView):
+    # GET /api/v1/users
+    def get(self, request):
         all_users = User.objects.all()
-        serializer = UserSerializer(all_users, many=True)
+        serializer = TinyUserSerializer(all_users, many=True)
         return Response(serializer.data)
 
 
-@api_view(["GET"])
-def user(request, user_id):
-    try:
-        user = User.objects.get(pk=user_id)
-    except User.DoesNotExist:
-        raise NotFound
+class UserDetail(APIView):
+    def get_object(self, pk):
+        try:
+            return User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            raise NotFound
 
-    if request.method == "GET":
-        serializer = UserSerializer(user)
+    # GET /api/v1/users/<int:pk>
+    def get(self, request, pk):
+        user = self.get_object(pk)
+        serializer = PrivateUserSerializer(user)
         return Response(serializer.data)
 
 
-@api_view(["GET"])
-def user_tweets(request, user_id):
-    try:
-        user = User.objects.get(pk=user_id)
-        serializer = TweetSerializer(user.tweets, many=True)
-        return Response(serializer.data)
-    except User.DoesNotExist:
-        raise NotFound
+class UserTweets(APIView):
+    # GET /api/v1/users/<int:pk>/tweets
+    def get(self, request, pk):
+        try:
+            user = User.objects.get(pk=pk)
+            serializer = TweetSerializer(user.tweets, many=True)
+            return Response(serializer.data)
+        except User.DoesNotExist:
+            raise NotFound
